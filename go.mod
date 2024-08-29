@@ -1,4 +1,4 @@
-module github.com/brunoleitem/go-wm
+module github.com/brunoleitem/go-img-api
 
 go 1.22.4
 
