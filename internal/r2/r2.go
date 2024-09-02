@@ -3,6 +3,7 @@ package r2
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -21,7 +22,6 @@ func NewR2Service() (*R2service, error) {
 	accessKey := os.Getenv("R2_ACCESS_KEY")
 	secretKey := os.Getenv("R2_SECRET_KEY")
 	bucket := os.Getenv("R2_BUCKET")
-	println("AKI", accessKey, secretKey, bucket, account)
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKey, secretKey, "")),
 		config.WithRegion("auto"),
@@ -46,6 +46,22 @@ func (r *R2service) ListBuckets(ctx context.Context) {
 	if err != nil {
 		panic(err)
 	}
+	nome := *list.Buckets[0].Name
+	println("Listando buckets: ")
+	println(nome)
+}
 
-	println(list.Buckets)
+func (r *R2service) UploadImage(ctx context.Context, key *string, img io.Reader, contentType string) error {
+	_, err := r.client.PutObject(ctx, &s3.PutObjectInput{
+		Bucket:      &r.bucket,
+		Key:         key,
+		Body:        img,
+		ContentType: &contentType,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

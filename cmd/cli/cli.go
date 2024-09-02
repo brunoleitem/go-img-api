@@ -1,9 +1,10 @@
 package main
 
 import (
-	"context"
+	"os"
+	"path/filepath"
 
-	"github.com/brunoleitem/go-img-api/internal/r2"
+	"github.com/brunoleitem/go-img-api/internal/img"
 	"github.com/joho/godotenv"
 )
 
@@ -12,24 +13,22 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	r2service, err := r2.NewR2Service()
+	f, err := os.Open("image.png")
 	if err != nil {
 		panic(err)
 	}
-	r2service.ListBuckets(context.TODO())
-	// i, err := img.LoadImage("image.png")
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// newImg, err := img.ProcessImage(i)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// err = img.SaveImage("output.png", newImg)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	defer f.Close()
+	i, err := img.LoadImage(f)
+	if err != nil {
+		panic(err)
+	}
+	newImg, err := img.ProcessImage(i)
+	if err != nil {
+		panic(err)
+	}
+	ext := filepath.Ext(f.Name())
+	err = img.SaveImage(newImg, "output"+ext)
+	if err != nil {
+		panic(err)
+	}
 }

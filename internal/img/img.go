@@ -1,33 +1,22 @@
 package img
 
 import (
+	"bytes"
+	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
+	"image/jpeg"
 	"image/png"
-	"math"
+	"io"
 	"os"
+	"strings"
 
 	"github.com/golang/freetype"
 )
 
-func LoadImage(filePath string) (image.Image, error) {
-	f, err := os.Open(filePath)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-
-	img, _, err := image.Decode(f)
-	if err != nil {
-		return nil, err
-	}
-
-	return img, nil
-}
-
-func SaveImage(filePath string, img *image.RGBA) error {
-	out, err := os.Create(filePath)
+func SaveImage(img *image.RGBA, filepath string) error {
+	out, err := os.Create(filepath)
 	if err != nil {
 		return err
 	}
@@ -36,13 +25,36 @@ func SaveImage(filePath string, img *image.RGBA) error {
 	return png.Encode(out, img)
 }
 
-func ProcessImage(img image.Image) (*image.RGBA, error) {
+func LoadImage(reader io.Reader) (image.Image, error) {
+	img, _, err := image.Decode(reader)
+	if err != nil {
+		return nil, err
+	}
+	return img, nil
+}
+
+func ProcessImage(img image.Image, format string) (io.Reader, error) {
 	newImg := drawRect(img)
 	err := drawText(newImg)
 	if err != nil {
 		return nil, err
 	}
-	return newImg, nil
+
+	buf := new(bytes.Buffer)
+	switch strings.ToLower(format) {
+	case ".png":
+		err = png.Encode(buf, newImg)
+	case ".jpeg":
+	case ".jpg":
+		err = jpeg.Encode(buf, newImg, nil)
+	default:
+		return nil, fmt.Errorf("unsupported format: %s", format)
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
 }
 
 func drawText(newImg *image.RGBA) error {
@@ -77,7 +89,7 @@ func drawRect(img image.Image) *image.RGBA {
 	newImg := image.NewRGBA(image.Rect(0, 0, width, height))
 	draw.Draw(newImg, newImg.Bounds(), img, image.Point{0, 0}, draw.Over)
 
-	rectW := int(math.Round(float64(width) * 0.3))
+	rectW := int(float64(width) * 0.3)
 	rectH := 60
 	padding := 15
 	rectPos := image.Rect(padding, height-rectH-padding, padding+rectW, height-padding)
