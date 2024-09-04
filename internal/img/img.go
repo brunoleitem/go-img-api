@@ -2,7 +2,6 @@ package img
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"image"
 	"image/color"
@@ -38,11 +37,7 @@ func LoadImage(reader io.Reader) (image.Image, error) {
 	return img, nil
 }
 
-func ProcessImage(img image.Image, format string) (io.Reader, error) {
-	var texto = "Hello Teste Teste Teste Teste Teste Teste Teste Teste Teste !"
-	if len(texto) > 110 {
-		return nil, errors.New("maximo de caracteres")
-	}
+func ProcessImage(img image.Image, format, texto string) (io.Reader, error) {
 	fontBytes, err := os.ReadFile("assets/arial.ttf")
 	if err != nil {
 		return nil, err

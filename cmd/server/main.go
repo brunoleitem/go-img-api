@@ -11,6 +11,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
 	server := gin.Default()
 	api.RegisterRoutes(server)
 	server.Run(":3333")
