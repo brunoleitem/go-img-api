@@ -1,10 +1,10 @@
 package main
 
 import (
-	"os"
-	"path/filepath"
+	"context"
+	"log"
 
-	"github.com/brunoleitem/go-img-api/internal/img"
+	"github.com/brunoleitem/go-img-api/internal/r2"
 	"github.com/joho/godotenv"
 )
 
@@ -13,22 +13,15 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	f, err := os.Open("image.png")
+	rt, err := r2.NewR2Service()
 	if err != nil {
 		panic(err)
 	}
-	defer f.Close()
-	i, err := img.LoadImage(f)
+	lala := "6f1a4b2a-1105-41bb-bd13-a26bc612e3d0.jpg"
+	var s *string = &lala
+
+	err = rt.DeleteImage(context.TODO(), s)
 	if err != nil {
-		panic(err)
-	}
-	newImg, err := img.ProcessImage(i)
-	if err != nil {
-		panic(err)
-	}
-	ext := filepath.Ext(f.Name())
-	err = img.SaveImage(newImg, "output"+ext)
-	if err != nil {
-		panic(err)
+		log.Fatalf("ERRO DELETANDO %v", err)
 	}
 }

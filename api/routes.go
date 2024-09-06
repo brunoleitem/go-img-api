@@ -8,4 +8,5 @@ import (
 func RegisterRoutes(server *gin.Engine) {
 	server.GET("/api/healthcheck", handlers.HandleHealthCheck)
 	server.POST("/api/upload", handlers.Uploader)
+	server.DELETE("/api/delete/:id", handlers.Delete)
 }

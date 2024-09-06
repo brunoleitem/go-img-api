@@ -43,9 +43,25 @@ func NewRedisService() (*RedisService, error) {
 
 func (r *RedisService) CreateImageKey(ctx context.Context, imgKey string) (string, error) {
 	userPassKey := uuid.New().String()
-	err := r.client.Set(ctx, imgKey, userPassKey, 168*time.Hour)
-	if err.Err() != nil {
-		return "", err.Err()
+	err := r.client.Set(ctx, userPassKey, imgKey, 168*time.Hour).Err()
+	if err != nil {
+		return "", err
 	}
 	return userPassKey, nil
+}
+
+func (r *RedisService) GetKeyValue(ctx context.Context, userPassKey *string) (string, error) {
+	val, err := r.client.Get(ctx, *userPassKey).Result()
+	if err != nil {
+		return "", err
+	}
+	return val, err
+}
+
+func (r *RedisService) DeleteKey(ctx context.Context, userPassKey *string) error {
+	err := r.client.Del(ctx, *userPassKey).Err()
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -29,6 +29,10 @@ func Uploader(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Erro", "error": "maximo de caracteres"})
 		return
 	}
+	if len(strings.TrimSpace(texto)) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Erro", "error": "insira algum texto"})
+		return
+	}
 
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -61,7 +65,8 @@ func Uploader(c *gin.Context) {
 		return
 	}
 
-	newFileName := uuid.New().String() + ext
+	imgId := uuid.New().String()
+	newFileName := imgId + ext
 	contentType := "image/" + strings.TrimPrefix(ext, ".")
 
 	err = r2.UploadImage(context.TODO(), &newFileName, processedImg, contentType)
@@ -69,7 +74,8 @@ func Uploader(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Erro interno", "error": err.Error()})
 		return
 	}
-	userKey, err := redisClient.CreateImageKey(context.TODO(), newFileName)
+
+	userKey, err := redisClient.CreateImageKey(context.TODO(), imgId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Erro interno", "error": err.Error()})
 		return

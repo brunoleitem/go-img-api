@@ -34,6 +34,7 @@ func NewR2Service() (*R2service, error) {
 	client := s3.NewFromConfig(cfg, func(o *s3.Options) {
 		o.BaseEndpoint = aws.String(fmt.Sprintf("https://%s.r2.cloudflarestorage.com", account))
 	})
+	fmt.Println("INICIOU R2")
 
 	return &R2service{
 		client: client,
@@ -59,6 +60,20 @@ func (r *R2service) UploadImage(ctx context.Context, key *string, img io.Reader,
 		ContentType: &contentType,
 	})
 
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *R2service) DeleteImage(ctx context.Context, imageId *string) error {
+	fmt.Println("version")
+	fmt.Println(imageId)
+	_, err := r.client.DeleteObject(ctx, &s3.DeleteObjectInput{
+		Bucket: &r.bucket,
+		Key:    imageId,
+	})
 	if err != nil {
 		return err
 	}
