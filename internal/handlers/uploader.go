@@ -75,7 +75,7 @@ func Uploader(c *gin.Context) {
 		return
 	}
 
-	userKey, err := redisClient.CreateImageKey(context.TODO(), imgId)
+	userKey, err := redisClient.CreateImageKey(context.TODO(), newFileName)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Erro interno", "error": err.Error()})
 		return
