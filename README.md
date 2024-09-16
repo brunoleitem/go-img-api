@@ -27,7 +27,7 @@ It is built using **Go**, integrates with **Cloudflare R2** for storage, and use
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/brunoleitem/image-watermark-api.git
+   git clone https://github.com/brunoleitem/go-img-api.git
    cd image-watermark-api
    ```
    
