@@ -43,5 +43,7 @@ It is built using **Go**, integrates with **Cloudflare R2** for storage, and use
     ```
 
 ## ToDo
-[ ] Cache images with redis
-[ ] Front end view
+- [ ] Cache images with redis
+- [ ] Front end view
+
+Any suggestions and PR`s are welcome!
